@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Burp Suite 代理机制，代理 PC、手机配置 | ZERO4orez</title>
+<link rel="stylesheet" href="https://zero4orez.github.io/css/style.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/zenburn.min.css">
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://zero4orez.github.io"><h1 class="title is-4">ZERO4orez</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/zero4orez">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">December 5, 2018</h2>
+    <h1 class="title">Burp Suite 代理机制，代理 PC、手机配置</h1>
+    <div class="content">
+      
+
+<p>时隔多年，重新拿起 Burp Suite。对以前使用 Burp 还有一些印象，但是具体操作起来，还是有一些出入。折腾了一阵子，终于在手机端和 PC 端都代理成功了。这一次直接记录下来，避免再折腾。</p>
+
+<h3 id="代理机制">代理机制</h3>
+
+<p>这是一篇面向对于使用 Burp Suite 有一丁点了解的读者的总结，所以有些东西会根据我自己觉得是否关键作一些解释，尽量讲得很清楚。</p>
+
+<p>代理机制不分什么端的设备，都是一样的。简单地讲就是，A 把本来要发送给 B 的流量先发送给 C，C 接收后，再发送给 B（或者做其它操作，包括不操作）。这个过程中，C 就是代理，它就是作了 A 与 B 的“代理”，当 A 发送流量给 B 时，C 就是 A 的“代理发送者”，同时是 B 的“代理接收者”，B 发送给 A 时同理。而 Burp Suite 就是实现这么一种代理机制的一个软件工具，它就是 C。</p>
+
+<p>你会发现上边涉及到的是 A、B 和 C 一共三台机器，这跟咱们在使用 Burp 的情况不一样啊，我们不就是只有<strong>一台电脑+访问的网站的服务器那台机器</strong>吗？</p>
+
+<p>确实是这样，但是你思考一下，当你不是用电脑访问网站，而是使用手机的情况呢？其实也就是代理手机流量。这种情况下是不是涉及到了三台机器了？<strong>手机+访问的网站服务器+运行 Burp 作代理的电脑</strong>。</p>
+
+<p>这里的原因是在第一种情况下，咱们直接就把电脑既当作上网用的机器，又让它运行 Burp 直接作代理机器了，毕竟 Burp 实现代理功能只是一个软件层面的东西，而用一台机器专门只作代理而不上网的话只不过是把专一性做到极致而已，你完全可以找两台电脑，一台只运行 Burp 作代理机，一台只用来上网。</p>
+
+<p>这其实只是个很简单的东西，但是明白了这个对于代理机制的理解是有不小帮助的。</p>
+
+<p>好了，说说这个代理具体是怎么实现的。</p>
+
+<p>现在假设我们使用 A 上网访问百度服务器 B，C 开了 Burp 在这中间代理流量。A 的网卡地址是 192.168.1.101，代理 C 与 A 处于同一个局域网，具体地址不重要，B 的地址也不重要。</p>
+
+<p>那么我们就需要把 C 上 Burp 的代理地址设置为 192.168.1.101，也就是 A 的地址，端口比较随意，一般就用 8080。这里的意思是说 C 将会监听 192.168.1.101:8080 上的流量，进行代理操作。</p>
+
+<p>注：关于端口的知识你也需要去了解一下，别随便设置然后又出其它问题，比如占用了其它服务的端口、端口号超出限制等。</p>
+
+<p>另一边，A 要配合 C 才能完成这样一个代理机制。在 A 机器需要让系统/浏览器知道“我的流量要先发到 C 的 Burp 上”，操作就是在系统/浏览器代理设置中将代理服务器和端口设置为 192.168.1.101:8080。</p>
+
+<p>A 与 C 一个被代理，一个代理，都要相互商量好然后各自作好自己的代理配置，一个愿打一个愿挨。不然的话就危险，变成中间人攻击了。</p>
+
+<p>说到危险，在代理的过程中会遇到一个关于证书的问题。</p>
+
+<p>在你做好上边的代理配置之后，其实就可以代理 HTTP 流量了（其实还有其它非 HTTPS 的流量）。但是因为现在大多数网站都基于 HTTPS 协议，它比较安全，像上边那样简简单单的代理是被禁止的，因为它发现你的访问流量被代理了，要先确认一下这个代理是可信的，不存在人为攻击。</p>
+
+<p>于是网站会要求代理出示证书，而这个代理就是 Burp Suite 本身，那么就要在系统/浏览器中安装 Burp Suite 的证书。</p>
+
+<p>在上边代理设置完成后，直接访问 <a href="http://burp">http://burp</a> 或者 192.168.1.101:8080 就可以下载证书。具体安装参考一下前边的文章：<a href="https://blog.csdn.net/AlimSah/article/details/61912781">【burpSuite】浏览器设置代理后无法访问https</a></p>
+
+<h3 id="burp-代理-pc-流量">Burp 代理 PC 流量</h3>
+
+<p>用的是 Win 10。</p>
+
+<p>浏览器之前用的是 Firefox，现在用 Chrome。</p>
+
+<p>因为 Chrome 使用的代理配置是与 Win 系统是一样的，也与 IE 一样，而这两者不知道为什么总是会存在一定的设置偏差（真的不知道为什么。。。有时候设置了这边，那边没生效，设置了那边，这边又没生效）。所以总是会带来一些困扰，再加上有些人推荐用 Chrome 的扩展 Switch-Proxy 来快速切换代理地址，这样把问题搞得更加复杂了。</p>
+
+<p>因为最近升级到最新版本 Chrome，发现它的代理设置变得更加明了了，现在它可以直接跳转到系统的 Internet 设置程序（就像 IE 一样）：</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205120917440.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<p>这样的话就不麻烦了，直接进入设置。
+<img src="https://img-blog.csdnimg.cn/20181205121019339.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<p>代理设置是在上边红框中的局域网设置里进行的，在下边红框处填写对应代理地址与端口：</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205121150166.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" />
+现在配置就是这么简单了，那么就建议不要再去使用那个 Chrome 代理扩展了，没必要，只会把逻辑搞复杂。</p>
+
+<h4 id="安装证书">安装证书</h4>
+
+<p>代理配置好之后访问 <a href="http://burp">http://burp</a> 下载证书，然后双击打开证书进行安装，要点只有一个，将它安装到“受信任的根证书颁发机构”这个路径下：
+<img src="https://img-blog.csdnimg.cn/20181205122422723.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<h3 id="burp-代理手机流量">Burp 代理手机流量</h3>
+
+<p>手机我用的是小米 Mix 2，连接到与 Burp 所处机器连接的同一个 Wi-Fi，然后系统 WLAN 设置中，找到连接的 Wi-Fi 右边那个更多设置（紫色圆圈那里）。</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205114314321.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<p>设置代理为手动，并填上相应地址、端口：</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205114331228.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<p><strong>【要点】</strong> 本来这样操作之后就应该是代理成功了，打开浏览器输入 <a href="http://burp">http://burp</a> 准备下载证书的时候发现无法访问。折腾了很久还是不明白问题是什么，可能是小区的 WLAN 进行了相应设置吧。</p>
+
+<p>最后自己下载一个 Wi-Fi 共享精灵，强行开了一个子网，让 Burp 与手机处在同一个 Wi-Fi 下，问题解决了。这里的关键是我自己强行开一个子网的话，完全能够保证子网下的机器是处在一个网段的，而且流量能够直接互通。</p>
+
+<h4 id="证书安装">证书安装</h4>
+
+<p>手机端的证书安装思路其实跟电脑一样，访问 <a href="http://burp">http://burp</a> 后下载证书，然后安装。下载下来的证书是 .der 格式，要先将它改成 .crt，不然小米系统不认它。</p>
+
+<p>具体安装过程：</p>
+
+<blockquote>
+<p>1、更多设置</p>
+</blockquote>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205120048457.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<blockquote>
+<p>2、系统安全</p>
+</blockquote>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205120138430.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<blockquote>
+<p>3、加密与凭据</p>
+</blockquote>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205120214697.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<blockquote>
+<p>4、从存储设备安装</p>
+</blockquote>
+
+<p><img src="https://img-blog.csdnimg.cn/20181205120244565.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FsaW1TYWg=,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+
+<p>全文完。</p>
+
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'zero4orez';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/zero4orez">zero4orez</a> 2018</p>
+  </div>
+</section>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+

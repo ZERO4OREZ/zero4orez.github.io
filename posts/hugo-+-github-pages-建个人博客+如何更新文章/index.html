@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hugo &#43; Github Pages 建个人博客&#43;如何更新文章 | ZERO4orez</title>
+<link rel="stylesheet" href="https://zero4orez.github.io/css/style.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/zenburn.min.css">
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://zero4orez.github.io"><h1 class="title is-4">ZERO4orez</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/zero4orez">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">December 6, 2018</h2>
+    <h1 class="title">Hugo &#43; Github Pages 建个人博客&#43;如何更新文章</h1>
+    <div class="content">
+      
+
+<p>搭建分为三部分：</p>
+
+<ul>
+<li><p>Hugo 本地建站</p></li>
+
+<li><p>站点主题配置</p></li>
+
+<li><p>从本地部署到 GitHub</p></li>
+</ul>
+
+<p>搭建好了之后还要<strong>知道如何持续更新，毕竟搭建这个网站就是为了持续写博客更新</strong>，这一部分网上没有相关细致的分享，琢磨了不少时间，但是这才是最重要的一部分，写在本文最后。</p>
+
+<h1 id="一-hugo-建站发文章">一、Hugo 建站发文章</h1>
+
+<h2 id="安装-hugo">安装 Hugo</h2>
+
+<p>【Windows 10】直接 GitHub release 线上下载，一般找最新的，看你喜欢咯。下载下来是一个 Hugo.exe 直接可以用的（没有规定要放哪里，其实它就是个软件，按你平常下载软件的喜好就行）。不过还是这里勤劳一点把它添加到系统环境变量里好，方便后续操作，不然后边在命令行里每次调用都要找到相应安装位置。</p>
+
+<h2 id="生成本地站点">生成本地站点</h2>
+
+<p>命令：hugo new site XXXX</p>
+
+<p>它会给你生成一个 XXXX 目录，这就是你的 XXXX 站点啦。</p>
+
+<p>这里可以先有个概念：</p>
+
+<ul>
+<li><p>XXXX 目录下边的 themes/ 用来放置 clone 的主题</p></li>
+
+<li><p>config.toml 是配置文件</p></li>
+
+<li><p>content/ 用来写博客（在里边建个 posts/）</p></li>
+</ul>
+
+<h2 id="使用-theme">使用 theme</h2>
+
+<p><a href="https://themes.gohugo.io/">https://themes.gohugo.io/</a> 这里找到喜欢的主题，找它 fork 到自己的 GitHub 上（其实也可以不用 fork 的，只要你不想后期自己去修改这个 theme 就行）。</p>
+
+<p>进入 XXXX 这个站点目录下。</p>
+
+<ul>
+<li><p>git init</p></li>
+
+<li><p>git submodule add 主题repo地址 themes/XXXXXXX</p></li>
+</ul>
+
+<p>（如果你不知道涉及到与远程 repo 交互的操作的前提是要做好 SSH 认证，那可以看另一篇介绍/或者网上找一下 “GitHub SSH 设置”之类的，关键词就是 SSH 啦）</p>
+
+<p>这里就把那个主题 clone 到了 themes/ 下了。</p>
+
+<p>然后在 XXXX 站点下的 config.toml 文件中增加一个主题的设置：theme = &ldquo;XXXXXXX&rdquo;</p>
+
+<h2 id="发布一个文章">发布一个文章</h2>
+
+<p>到这里 Hugo 站点就建成了，不过目前服务器是在自己的电脑上的。</p>
+
+<ul>
+<li>使用命令：hugo server -D 启动服务器，访问地址是 localhost:1313/</li>
+</ul>
+
+<p>但是现在网站是没有内容的，因为没有写东西呢。</p>
+
+<p>来写一个文章：（其实这里只是想让你看一下效果，说明它真的变成一个本地网站的，你也可以这时候直接进行下边第二步修改主题的配置，一样可以看效果的）</p>
+
+<ul>
+<li>使用命令：hugo new posts/firstPost.md</li>
+</ul>
+
+<p>在 content/posts/ 目录下生成 firstPost.md 文章。这个 posts/ 就是你本地发布文章的地方。</p>
+
+<p>查看 localhost:1313，可以看到博文发表了。</p>
+
+<h1 id="二-修改主题配置">二、修改主题配置</h1>
+
+<p>这个其实就是修改上边提到的那个 config.toml 文件，只是配置更多内容，使得它展示更丰富的效果，其实也就是每个主题的要义（主题的源码内容其实就是关于如何更丰富地展示网页的 CSS 之类的东西，但是需要你的站点总的去配置相应的路径啊之类的，这个总的配置文件就是那个 config.toml，它是在你的 XXXX 这个 site 目录下的）。</p>
+
+<p>而每个主题中其实都会告诉你要在 config.toml 这个文件中配置什么，直接复制粘贴就行了。</p>
+
+<p>（此外还有它的其它设置，如新增其它 CSS 之类的，具体看该主题的说明吧）</p>
+
+<h1 id="三-部署到-github">三、部署到 GitHub</h1>
+
+<ul>
+<li><p>GitHub 上建 repo，名字为：yourUserName.github.io （就这个格式，不要改）</p></li>
+
+<li><p>在 XXXX <strong>站点下</strong>使用命令：<strong>hugo 以执行 config.toml</strong></p></li>
+</ul>
+
+<p><strong>这样会在 XXXX 下生成 public/ 目录，这个目录就是网站对外的“后台”，你在 content/posts/ 中写的文章会在这里边自动更新，然后显示在网站</strong> <strong><a href="https://yourUserName.github.io">https://yourUserName.github.io</a></strong> <strong>上。</strong></p>
+
+<ul>
+<li><p>生成 public/ 之后，进入 public/：</p></li>
+
+<li><p>git init</p></li>
+
+<li><p>git remote add origin <a href="https://github.com/yourUserName/yourUserName.github.io.git">https://github.com/yourUserName/yourUserName.github.io.git</a> 把项目绑定</p></li>
+
+<li><p>git add -A</p></li>
+
+<li><p>git commit -m &ldquo;XXXXXXXXXX&rdquo;</p></li>
+
+<li><p>git push -u origin master 推送更新</p></li>
+</ul>
+
+<h1 id="四-之后怎么持续发布文章和修改网站效果">四、之后怎么持续发布文章和修改网站效果？</h1>
+
+<p>总结一下更新 config.toml 和文章后推送到 <a href="https://yourUserName.github.io">https://yourUserName.github.io</a> 上的方法。</p>
+
+<ul>
+<li><p>注意，<strong>文章是在 XXXX 站点下 /content/posts/ 目录中写</strong>。</p></li>
+
+<li><p>首先其实更新推送的 repo 是 public 这一个（就是yourName.github.io.git），跟自己<strong>建的</strong><strong>站点</strong>和<strong>主题</strong>这两个 repo  都没有关系，git 命令只在这个目录下使用（背后的执行机制肯定是有关系的吧？其实在 VS Code 中它直观显示的是改动的 repo 是两个，一个是 XXXX 这个站点，一个是 kiss 这个主题，并且其实没有显示 public 这个 repo 名 yourName.github.io，深入暂时就不去研究了，这里也不用管）。</p></li>
+
+<li><p>虽然 config.toml 和写文章的 content/posts/ 都不在 public 这个 repo 中，没法用 git 去更新它们，但是 <strong>hugo</strong> 这一句完成了这一步，它会把 config.toml 和 content/posts/ 中的更改自动同步到 public 这个 repo 中。</p></li>
+
+<li><p>所以，无论是要修改网站配置 config.toml 还是文章（或者其它），只关于 <strong>XXXX 站点目录</strong>和 <strong>public/</strong> 这两个目录，操作也只有<strong>四步</strong>：</p></li>
+
+<li><p>1、修改完成之后在 <strong>XXXX 站点目录</strong>下执行 <strong>hugo</strong></p></li>
+
+<li><p>2、进入到 <strong>public/</strong> 中，三阶段执行 git</p></li>
+
+<li><p>git add -A</p></li>
+
+<li><p>git commit -m &ldquo;XXXXXXX&rdquo;</p></li>
+
+<li><p>git push origin master</p></li>
+</ul>
+
+<p>但是在写文章的时候，有两个点需要注意（以 kiss 主题为例）：</p>
+
+<ul>
+<li><p>只能用 md 格式（后缀），不然不显示。</p></li>
+
+<li><p>文章开头要加一些东西标识</p></li>
+</ul>
+
+<p><img src="https://images-cdn.shimo.im/l7GWGKM6cGYFmF2a/image.png!thumbnail" alt="" /></p>
+
+<p>它是通过命令对 XXXX 站点下 archetypes/ 下的 default.md 设置的内容进行编译的。</p>
+
+<p>附上官方说明：<a href="https://github.com/tanksuzuki/hemingway/blob/master/exampleSite/content/post/creating-a-new-theme.md">https://github.com/tanksuzuki/hemingway/blob/master/exampleSite/content/post/creating-a-new-theme.md</a></p>
+
+<p><img src="https://images-cdn.shimo.im/Q2Axy9OwiCo6Og13/image.png!thumbnail" alt="" /></p>
+
+<p>如果你用 hugo new filename 命令去创建新文章，那它会自动给你这些，但是不想这样用 hugo 的话，就手动自己写。</p>
+
+<p>好像其它主题的 default 规则是不一样的，但是阅读完上边这么多东西，应该知道相应的不同该如何处理了，先用 hugo new filename 生成一个规则内的文档看看，然后相应地联系一下逻辑就知道啦。</p>
+
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'zero4orez';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/zero4orez">zero4orez</a> 2018</p>
+  </div>
+</section>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
