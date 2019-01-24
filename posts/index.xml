@@ -7,10 +7,32 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; &lt;a href=&#34;https://github.com/zero4orez&#34;&gt;zero4orez&lt;/a&gt; 2018</copyright>
-    <lastBuildDate>Tue, 08 Jan 2019 15:24:29 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 24 Jan 2019 15:19:19 +0800</lastBuildDate>
     
 	<atom:link href="https://zero4orez.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>不知不觉中阅读源码？</title>
+      <link>https://zero4orez.github.io/posts/%E4%B8%8D%E7%9F%A5%E4%B8%8D%E8%A7%89%E4%B8%AD%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81/</link>
+      <pubDate>Thu, 24 Jan 2019 15:19:19 +0800</pubDate>
+      
+      <guid>https://zero4orez.github.io/posts/%E4%B8%8D%E7%9F%A5%E4%B8%8D%E8%A7%89%E4%B8%AD%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81/</guid>
+      <description>阅读一些优秀开源项目的源码对于编程思维与技巧等方面能力的提升是有很大帮助的，做开发的同学应该都明白其中的道理。
+以前在大学里的时候，总是想知道如何通过源码去学习？
+同时，因为只是想着通过阅读源码来提升，但是“提升”这样一个空泛的目标会让学习过程无从下手。虽然有一个明确的“提升”方向，也就是要提高编程能力，但是你并不知道具体是要提高什么？具体是要怎么去提高？总之就是处于迷惘状态，甚至连问题是什么的思路都不清晰。
+但是这一片迷雾可以归结为一个问题：什么情况下可以切入某个项目去开始阅读源码呢？
+“什么情况下可以切入某个项目去开始阅读源码”、“如何通过源码去学习”，这两个问题就是本文要讲的。
+昨天我在调整个人博客的某个问题之后，我的小伙伴【辣鸡Python开发】希望我把这个经验教教他，因为他问的时候我已经离开电脑，暂时不方便直接给他指出来这样这样-那样那样，所以我就只能动脑回顾了一下，然后顺其自然就把整个解决该问题的过程给过了一遍，从最开始网上搜索、尝试、无果自己阅读博客框架的源码、查官方文档、再尝试、调整……到最后终于成功解决问题。
+咦，“阅读源码”、“查看官方文档”，我不知不觉之中自己做了这两件事情！
+没错，前边说不知道如何学习源码、也不知道什么契机可以切入某个开源项目去阅读源码，这两个问题在不知不觉中都被我回答了。所以也才有此文。
+下边具体分享一下昨天我解决问题的整个研究过程，记录一下，同时给我那【辣鸡Python开发】小伙伴一个交待，也希望读者能有所收获。
+我的博客是使用 Hugo 搭建的，搭建之后它在博客首页会显示文章的“缩略样式”，也就是显示文章的头几十/几百个字符，如果点击“Read more”就可以跳转查看完整内容。
+但是我嫌这缩略也太长了，如下图，数了一下，这篇文章“缩略”之后竟然还显示了 15 行，真是丑爆了： 所以我就想通过设置把它调整少几行。问题其实就这么简单，但是对于一个外行人来说，也是需要做一些研究才能搞定的，毕竟网上都搜不到这样的问题。
+真的搜索不到，这样具体个性化的问题本身就不够“通用”，而且关于 Hugo 相关的具体实践也不多，大多停留在使用 Hugo 把博客搭建起来。
+没办法，不知不觉自己打开了博客项目的源码，网站结构很简单，所以根据逻辑还比较好找，源码一看也就知道相应的显示效果是在哪里被描述的，在网站主题下 Layout 下的 index.html 中：
+&amp;lt;section class=&amp;quot;section&amp;quot;&amp;gt; &amp;lt;div class=&amp;quot;container&amp;quot;&amp;gt; {{ range sort .Paginator.Pages }} &amp;lt;article&amp;gt; &amp;lt;h2 class=&amp;quot;subtitle is-6&amp;quot;&amp;gt;{{ .</description>
+    </item>
     
     <item>
       <title>80 15 5 法则：让工作保持新鲜感</title>

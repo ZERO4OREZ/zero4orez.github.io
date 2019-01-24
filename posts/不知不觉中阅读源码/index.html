@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>不知不觉中阅读源码？ | ZERO4orez</title>
+<link rel="stylesheet" href="https://zero4orez.github.io/css/style.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/zenburn.min.css">
+
+
+<section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://zero4orez.github.io">
+          <h1 class="title is-4">ZERO4orez</h1>
+        </a>
+      </div>
+      </br>
+      <div>
+        <a class="nav-item" href="https://zero4orez.github.io">
+          <h1 class="vice-title">input -&gt; output</h2>
+        </a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/zero4orez">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle is-6">January 24, 2019</h2>
+    <h1 class="title">不知不觉中阅读源码？</h1>
+    <div class="content">
+      <p>阅读一些优秀开源项目的源码对于编程思维与技巧等方面能力的提升是有很大帮助的，做开发的同学应该都明白其中的道理。</p>
+
+<p>以前在大学里的时候，总是想知道如何通过源码去学习？</p>
+
+<p>同时，因为只是想着通过阅读源码来提升，但是“提升”这样一个空泛的目标会让学习过程无从下手。虽然有一个明确的“提升”方向，也就是要提高编程能力，但是你并不知道具体是要提高什么？具体是要怎么去提高？总之就是处于迷惘状态，甚至连问题是什么的思路都不清晰。</p>
+
+<p>但是这一片迷雾可以归结为一个问题：什么情况下可以切入某个项目去开始阅读源码呢？</p>
+
+<p>“什么情况下可以切入某个项目去开始阅读源码”、“如何通过源码去学习”，这两个问题就是本文要讲的。</p>
+
+<p>昨天我在调整个人博客的某个问题之后，我的小伙伴【辣鸡Python开发】希望我把这个经验教教他，因为他问的时候我已经离开电脑，暂时不方便直接给他指出来这样这样-那样那样，所以我就只能动脑回顾了一下，然后顺其自然就把整个解决该问题的过程给过了一遍，从最开始网上搜索、尝试、无果自己阅读博客框架的源码、查官方文档、再尝试、调整……到最后终于成功解决问题。</p>
+
+<p>咦，“阅读源码”、“查看官方文档”，我不知不觉之中自己做了这两件事情！</p>
+
+<p>没错，前边说不知道如何学习源码、也不知道什么契机可以切入某个开源项目去阅读源码，这两个问题在不知不觉中都被我回答了。所以也才有此文。</p>
+
+<p>下边具体分享一下昨天我解决问题的整个研究过程，记录一下，同时给我那【辣鸡Python开发】小伙伴一个交待，也希望读者能有所收获。</p>
+
+<p>我的博客是使用 Hugo 搭建的，搭建之后它在博客首页会显示文章的“缩略样式”，也就是显示文章的头几十/几百个字符，如果点击“Read more”就可以跳转查看完整内容。</p>
+
+<p>但是我嫌这缩略也太长了，如下图，数了一下，这篇文章“缩略”之后竟然还显示了 15 行，真是丑爆了：
+<img src="https://uploader.shimo.im/f/c7IyQljUtnAAcT6Y.png" alt="pic0" />
+所以我就想通过设置把它调整少几行。问题其实就这么简单，但是对于一个外行人来说，也是需要做一些研究才能搞定的，毕竟网上都搜不到这样的问题。</p>
+
+<p>真的搜索不到，这样具体个性化的问题本身就不够“通用”，而且关于 Hugo 相关的具体实践也不多，大多停留在使用 Hugo 把博客搭建起来。</p>
+
+<p>没办法，不知不觉自己打开了博客项目的源码，网站结构很简单，所以根据逻辑还比较好找，源码一看也就知道相应的显示效果是在哪里被描述的，在网站主题下 Layout 下的 index.html 中：</p>
+
+<pre><code>&lt;section class=&quot;section&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    {{ range sort .Paginator.Pages }}
+    &lt;article&gt;
+      &lt;h2 class=&quot;subtitle is-6&quot;&gt;{{ .Date.Format &quot;January 2, 2006&quot; }}&lt;/h2&gt;
+      &lt;h1 class=&quot;title&quot;&gt;&lt;a href=&quot;{{ .Permalink }}&quot;&gt;{{ .Title }}&lt;/a&gt;{{ if .Draft }} ::Draft{{ end }}&lt;/h1&gt;
+      &lt;div class=&quot;content&quot;&gt;
+        {{ .Summary | plainify | safeHTML }}
+        {{ if .Truncated }}
+        ...&lt;a class=&quot;button is-link&quot; href=&quot;{{ .Permalink }}&quot; style=&quot;height:28px&quot;&gt;
+          Read more
+          &lt;span class=&quot;icon is-small&quot;&gt;
+            &lt;i class=&quot;fa fa-angle-double-right&quot;&gt;&lt;/i&gt;
+          &lt;/span&gt;
+        &lt;/a&gt;
+        {{ end }}
+      &lt;/div&gt;
+    &lt;/article&gt;
+    {{ end }}
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre>
+
+<p>这段代码一看就知道它是对应了我前边讲到的那个文章“缩略”效果，而其中：
+<img src="https://uploader.shimo.im/f/V06Qa0vnLdUwDHHy.png" alt="pic1" />
+这里的 {{ if .Truncated }} 也表明它在判断文章是否被“截断”，也就是被“缩略”，但我还是在这里小小地测试了一下，把“&hellip;”/“Read more”稍候一个，看网页效果，发现没错，就是这里。</p>
+
+<p>于是我就在源码中查找 .Truncated 相关的东西，没有找到任何定义与引用。</p>
+
+<p>然后去网上搜索，发现被带入了 Hugo 官方文档，然后简单学习了一下具体的 Page Variables（之前基础有了解过，但是没有看到过那么多系统默认的项），不过还是没有找到最终想要的 .Truncated。</p>
+
+<p>于是我 Ctrl+F，bingo。
+<img src="https://uploader.shimo.im/f/6mCIGGjxFLEuoD7N.png" alt="pic2" />
+看到了一个 .Summary！</p>
+
+<p>联系了一下前边的源码，在判断 if .Truncated 之前确实有一个 .Summary：
+<img src="https://uploader.shimo.im/f/kd1CleRtQKU6anRy.png" alt="pic3" />
+于是我查看 .Summary：
+<img src="https://uploader.shimo.im/f/qxBrlhv8CIMSvYGj.png" alt="pic4" />
+写得很清楚，.Summary 是用来表示文章截断长度的，并且默认是 70 words，也就是前边说的大约 15 行那么长。但是 .Summary 是引用时用的，设置时用的是 summaryLength。</p>
+
+<p>其实到这里这个设置方式就已经知道了，不用再往下了。但我还是想看看最终这个 summaryLength：
+<img src="https://uploader.shimo.im/f/Ry2QzFBBIIg417ov.png" alt="pic5" />
+完全没问题，它的描述也验证了上边说的，而且只有到了这一步，才不再有下一个链接！也意味着这是可见、可操作的最底层了！那么对于整个模式也就理解了，以后我就知道所有这种配置和引用的“用词”是分开的，而且它们在官方文档中的层级关系是怎样，就可以把这样的经验完全通用化，以后类似的问题就不再是问题了。</p>
+
+<p>接着我就在 config 文件中添加了一个 summaryLength：
+<img src="https://uploader.shimo.im/f/xXXyrluBfFoHzVAu.png" alt="pic6" />
+更新后再看博客：
+<img src="https://uploader.shimo.im/f/HFXvvE7Xdc0SsecH.png" alt="pic7" />
+缩略效果大概只剩下 7 行了。问题解决！</p>
+
+<p>这个过程中，其实也才真正明白，Hugo 搭建的这博客，它的配置和引用配置的模式具体是怎样怎样，所谓的 Page Variables 具体又是如何使用；而且更重要的是，一旦明白了这一点，再加上知道了它的官方文档使用起来这么方便，那以后遇到同类型的问题就很容易解决了。</p>
+
+<p>回过头来总结一下：</p>
+
+<p>一般来说，像我上边分享的这一个研究过程，阅读源码的契机是当你需要解决特定问题的时候，这样的动机，对于“提升编程能力”这么一个大方向来说，才是具体切实可实施的，也是最有效的。</p>
+
+<p>扩展开来讲，不管是面对什么方面的问题，往往大家其实都有一个大方向、目标，但是为什么那么多人最终都无法达成目标呢？就是因为没有一个真正可行的 roadmap，而没有这个的原因是没有一个真正时效性的动机。也就是说大方向、大目标是一种非时效性的动机，而实际问题正是一种需要当下解决的时效性动机，这一点再扩展开来讲其实也可以讲很多，比如“为什么人能自发地坚持做一件事？”、“持续性地刺激、打鸡血的作用”……暂时打住了。读者随意发散思考吧。</p>
+
+<p>这里想说的是，当你想要解决问题的时候，如果查找不到相关资料，这时候你就可以去读源码！所以，关键是动起手来，先去应用一些开源框架/库，先用起来，用的过程中遇到问题，你就很有机会会很自然地去阅读源码。</p>
+
+<p>上边讲的是阅读源码的契机、切入点。另一方面，关于如何阅读源码，在我这个 case 中，其实很简单，就是通过对于框架相关知识点的基本理解，大概知道整个框架的运行逻辑，加上思考框架运行的响应效果，那么经过尝试，就可以定位到相关源码的具体位置，然后再一步步根据源码去调试，去解决问题。而在解决问题的过程中，你又会做一些源码级的搜索（这就不同于最开始你直接搜索怎么解决这个问题），比如查找某个属性的作用和用法，这里也会自然地用到官方文档！</p>
+
+<p>当然定位相关源码位置更专业的方法可能是“代码级别的专业debug”。</p>
+
+<p>在这整个过程中，你阅读了源码与文档，不知不觉中就会学习到它的源码是怎么样写的，它的模式、它的代码编写逻辑等等内容，这就是在提升你的编程能力！</p>
+
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'zero4orez';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container has-text-centered">
+    <p>&copy; <a href="https://github.com/zero4orez">zero4orez</a> 2018</p>
+  </div>
+</section>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
