@@ -78,7 +78,7 @@
 
 <p>但是我嫌这缩略也太长了，如下图，数了一下，这篇文章“缩略”之后竟然还显示了 15 行，真是丑爆了：</p>
 
-<p><img src="../pic/pic0" alt="pic0" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic0.png" alt="pic0" /></p>
 
 <p>所以我就想通过设置把它调整少几行。问题其实就这么简单，但是对于一个外行人来说，也是需要做一些研究才能搞定的，毕竟网上都搜不到这样的问题。</p>
 
@@ -111,7 +111,7 @@
 
 <p>这段代码一看就知道它是对应了我前边讲到的那个文章“缩略”效果，而其中：</p>
 
-<p><img src="../pic/pic1" alt="pic1" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic1.png" alt="pic1" /></p>
 
 <p>这里的 {{ if .Truncated }} 也表明它在判断文章是否被“截断”，也就是被“缩略”，但我还是在这里小小地测试了一下，把“&hellip;”/“Read more”稍候一个，看网页效果，发现没错，就是这里。</p>
 
@@ -121,33 +121,33 @@
 
 <p>于是我 Ctrl+F，bingo。</p>
 
-<p><img src="../pic/pic2" alt="pic2" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic2.png" alt="pic2" /></p>
 
 <p>看到了一个 .Summary！</p>
 
 <p>联系了一下前边的源码，在判断 if .Truncated 之前确实有一个 .Summary：</p>
 
-<p><img src="../pic/pic3" alt="pic3" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic3.png" alt="pic3" /></p>
 
 <p>于是我查看 .Summary：</p>
 
-<p><img src="../pic/pic4" alt="pic4" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic4.png" alt="pic4" /></p>
 
 <p>写得很清楚，.Summary 是用来表示文章截断长度的，并且默认是 70 words，也就是前边说的大约 15 行那么长。但是 .Summary 是引用时用的，设置时用的是 summaryLength。</p>
 
 <p>其实到这里这个设置方式就已经知道了，不用再往下了。但我还是想看看最终这个 summaryLength：</p>
 
-<p><img src="../pic/pic5" alt="pic5" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic5.png" alt="pic5" /></p>
 
 <p>完全没问题，它的描述也验证了上边说的，而且只有到了这一步，才不再有下一个链接！也意味着这是可见、可操作的最底层了！那么对于整个模式也就理解了，以后我就知道所有这种配置和引用的“用词”是分开的，而且它们在官方文档中的层级关系是怎样，就可以把这样的经验完全通用化，以后类似的问题就不再是问题了。</p>
 
 <p>接着我就在 config 文件中添加了一个 summaryLength：</p>
 
-<p><img src="../pic/pic6" alt="pic6" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic6.png" alt="pic6" /></p>
 
 <p>更新后再看博客：</p>
 
-<p><img src="../pic/pic7" alt="pic7" /></p>
+<p><img src="https://raw.githubusercontent.com/ZERO4OREZ/zero4orez.github.io/master/pic/pic7.png" alt="pic7" /></p>
 
 <p>缩略效果大概只剩下 7 行了。问题解决！</p>
 
